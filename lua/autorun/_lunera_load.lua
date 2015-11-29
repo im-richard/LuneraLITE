@@ -1,8 +1,8 @@
 -----------------------------------------------------------------
 -- @package     LuneraLITE
 -- @author      Richard
--- @build       v1.4.0
--- @release     11.22.2015
+-- @build       v1.4.1
+-- @release     11.29.2015
 -----------------------------------------------------------------
 
 -----------------------------------------------------------------
@@ -12,9 +12,10 @@ Lunera = Lunera or {}
 Lunera.Script = Lunera.Script or {}
 Lunera.Script.Name = "LuneraLITE"
 Lunera.Script.Author = "Richard"
-Lunera.Script.Build = "1.4.0"
-Lunera.Script.Released = "Nov 22, 2015"
-Lunera.Script.Website = "https://scriptfodder.com/scripts/view/1621"
+Lunera.Script.Build = "1.4.1"
+Lunera.Script.SFid = "1621"
+Lunera.Script.Released = "Nov 28, 2015"
+Lunera.Script.Website = "https://scriptfodder.com/scripts/view"
 
 Lunera.Settings = Lunera.Settings or {}
 Lunera.Language = Lunera.Language or {}
@@ -36,7 +37,7 @@ local LuneraStartupInfo = {
     [[[build]....... v]] .. Lunera.Script.Build .. [[ ]],
     [[[released].... ]] .. Lunera.Script.Released .. [[ ]],
     [[[author]...... ]] .. Lunera.Script.Author .. [[ ]],
-    [[[website]..... ]] .. Lunera.Script.Website .. [[ ]],
+    [[[website]..... ]] .. Lunera.Script.Website .. "/" .. Lunera.Script.SFid .. [[ ]],
 }
 
 local LuneraStartupFooter = {
@@ -158,14 +159,16 @@ local function MOTDDraw(text)
     MsgC(Color( 0, 255, 0 ), "\n....................................................................\n\n")
 end
 
-local function MOTDFetch(html, len, headers, code)
-    if not headers or headers.Status and string.sub(headers.Status, 1, 3) != "200" then 
-        return 
+local function MOTDFetch(body, len, headers, code)
+    if len > 0 and headers and code == 200 then
+		MOTDDraw(body)
+	else
+		MOTDDraw("An error occured fetching the MOTD. Please try again later.")
     end
-    MOTDDraw(html)
 end
 
 local function MOTDShow()
-    http.Fetch("http://galileomanager.com/api/products/1621/motd-lte.txt", MOTDFetch, fn.Id)
+	local MOTDRequest = "http://api.galileomanager.com/products/1621/motd-lte.txt" .. Lunera.Script.SFid .. "/motd.txt"
+    http.Fetch(MOTDRequest, MOTDFetch)
 end
 timer.Simple(10, MOTDShow)
